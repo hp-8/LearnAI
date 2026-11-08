@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI Roadmap</title>
+<style>
+:root{--bg:#0f1115;--card:#1a1d24;--line:#3a3f4b;--text:#e6e6e6;--mute:#8b93a1;--acc:#6c5ce7;--easy:#00b8a3;--med:#ffb800;--hard:#ff375f}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 system-ui,sans-serif}
+header{display:flex;gap:16px;align-items:center;padding:14px 16px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+h1{font-size:18px;margin:0}#total{flex:1;min-width:160px}
+.bar{height:6px;background:var(--line);border-radius:3px;overflow:hidden}.bar>i{display:block;height:100%;background:var(--acc)}
+#wrap{overflow:auto;padding:16px}#tree{position:relative;margin:0 auto}
+svg{position:absolute;inset:0;pointer-events:none}
+.node{position:absolute;width:160px;padding:10px;background:var(--acc);border-radius:8px;cursor:pointer;text-align:center;font-weight:600;font-size:13px;border:0;color:#fff}
+.node:hover{filter:brightness(1.15)}.node .bar{margin-top:6px;background:#0004}.node .bar>i{background:#fff}
+.node.done{background:#2d7d46}
+#panel{position:fixed;top:0;right:0;height:100%;width:min(540px,100%);background:var(--card);border-left:1px solid var(--line);transform:translateX(100%);transition:.2s;overflow:auto;padding:20px 16px}
+#panel.open{transform:none}#panel h2{margin:0 0 4px}.x{float:right;background:none;border:0;color:var(--mute);font-size:22px;cursor:pointer}
+details{border:1px solid var(--line);border-radius:8px;margin:8px 0;padding:8px 12px}
+summary{cursor:pointer;font-weight:600;display:flex;justify-content:space-between;gap:8px}
+.tag{font-size:11px;color:var(--mute);border:1px solid var(--line);border-radius:4px;padding:0 6px;margin-left:6px;font-weight:400}
+table{width:100%;border-collapse:collapse;margin-top:6px}td{padding:6px;border-top:1px solid var(--line)}
+.E{color:var(--easy)}.M{color:var(--med)}.H{color:var(--hard)}h3{font-size:13px;color:var(--mute);text-transform:uppercase;margin:16px 0 4px}
+input{accent-color:var(--acc);width:16px;height:16px}
+</style>
+</head>
+<body>
+<header><h1>AI Roadmap</h1><div id="total"></div><span id="count" style="color:var(--mute)"></span></header>
+<div id="wrap"><div id="tree"><svg id="edges"></svg></div></div>
+<aside id="panel"></aside>
+<script>
+// [id, name, row, deps, project, subtopics: [name, elective?, [[problem, difficulty]]]]
+const T=[
+["fnd","Foundations",0,[],"SVD image compression + Naive Bayes spam filter",[
+ ["Python & NumPy",0,[["Vectorize a nested loop","E"],["Broadcast pairwise distances","M"]]],
+ ["Linear Algebra",0,[["Matrix multiply from scratch","E"],["PCA via SVD","M"]]],
+ ["Calculus",0,[["Numerical gradient check","E"],["Implement Adam optimizer","M"]]],
+ ["Probability & Stats",0,[["Monte Carlo estimate of pi","E"],["MLE of a Gaussian","M"]]]]],
+["ds","Data Science",1,["fnd"],"End-to-end analysis + dashboard on a public dataset",[
+ ["SQL",0,[["Top-N per group with window functions","M"],["Retention cohort query","H"]]],
+ ["Pandas & Cleaning",0,[["Handle missing values & outliers","E"],["Groupby + merge drill","M"]]],
+ ["EDA & Visualization",0,[["Correlation heatmap + insights","E"],["Tell a story in 3 charts","M"]]],
+ ["A/B Testing",0,[["Two-proportion z-test","M"],["Sample size calculator","M"]]],
+ ["Time Series",1,[["Moving average forecast","E"],["ARIMA on sales data","H"]]],
+ ["Big Data",1,[["Word count in PySpark","E"],["Spark join + aggregation","M"]]]]],
+["cai","Classical AI",1,["fnd"],"Unbeatable Connect-4 bot + diagnosis expert system",[
+ ["Search",0,[["BFS maze solver","E"],["A* on grid","M"],["Alpha-beta minimax","H"]]],
+ ["Logic",0,[["Forward chaining","M"],["Unification","H"]]],
+ ["Expert Systems",0,[["Rule engine with 'why' explanations","M"]]],
+ ["Fuzzy Logic",0,[["Membership functions + fuzzy ops","E"],["Mamdani controller","M"]]],
+ ["Evolutionary",1,[["Genetic algorithm for TSP","M"]]],
+ ["Game Theory",1,[["Find Nash equilibrium (2x2)","M"]]]]],
+["ml","Machine Learning",1,["fnd"],"House price predictor served as an API",[
+ ["Regression",0,[["Linear regression (normal equation)","E"],["Ridge via gradient descent","M"]]],
+ ["Classification",0,[["Logistic regression","E"],["kNN","E"],["Precision/recall/ROC-AUC","M"]]],
+ ["Trees & Ensembles",0,[["Decision tree (CART)","M"],["Gradient boosting","H"]]],
+ ["Clustering & PCA",0,[["k-means","E"],["GMM with EM","H"]]],
+ ["Probabilistic Models",1,[["Viterbi for HMM","M"]]],
+ ["Causal ML",1,[["Propensity score matching","H"]]]]],
+["app","Applied AI",2,["ds","ml"],"Movie recommender + semantic search",[
+ ["Recommender Systems",0,[["Item-item collaborative filtering","M"],["Matrix factorization","H"]]],
+ ["Search & Ranking",0,[["BM25","M"],["NDCG metric","M"]]],
+ ["Anomaly Detection",0,[["Z-score + IQR detector","E"],["Isolation forest","M"]]]]],
+["dl","Deep Learning",2,["ml"],"Autograd engine + MNIST from scratch",[
+ ["Neural Nets from Scratch",0,[["Softmax + cross-entropy","E"],["MLP backprop in NumPy","M"],["Scalar autograd engine","H"]]],
+ ["PyTorch",0,[["Training loop from scratch","E"],["Custom Dataset + DataLoader","E"]]],
+ ["Training Craft",0,[["Overfit one batch","E"],["Implement BatchNorm","M"]]],
+ ["Graph Neural Nets",1,[["GCN layer","H"]]]]],
+["rl","Reinforcement Learning",2,["ml"],"Agent that lands LunarLander",[
+ ["MDPs & Q-learning",0,[["Value iteration on gridworld","E"],["Tabular Q-learning","M"]]],
+ ["Deep RL",0,[["REINFORCE on CartPole","M"],["DQN with replay buffer","H"]]],
+ ["Multi-Agent RL",1,[["Independent Q-learners","H"]]]]],
+["cv","Computer Vision",3,["dl"],"Real-time webcam object detector",[
+ ["CNNs",0,[["2D convolution from scratch","E"],["Fine-tune pretrained ResNet","M"]]],
+ ["Detection & Segmentation",0,[["IoU + non-max suppression","E"],["U-Net","H"]]],
+ ["Vision Transformers",0,[["Patch embedding","M"]]]]],
+["nlp","NLP",3,["dl"],"Tiny GPT trained on your own text",[
+ ["Text Basics",0,[["TF-IDF","E"],["Word2vec skip-gram","H"]]],
+ ["RNNs",0,[["Char-level RNN","M"]]],
+ ["Transformers",0,[["Scaled dot-product attention","E"],["Multi-head attention","M"],["BPE tokenizer","M"]]],
+ ["Speech",1,[["Whisper transcription pipeline","E"]]]]],
+["rob","Robotics",3,["rl","dl"],"Simulated robot navigating a maze",[
+ ["Kinematics & Control",0,[["Forward kinematics 2-link arm","E"],["PID controller","E"],["Inverse kinematics","M"]]],
+ ["Localization & Planning",0,[["Kalman filter","M"],["RRT path planner","M"]]],
+ ["Robot Learning",0,[["Behavior cloning in sim","H"]]]]],
+["ops","MLOps",3,["dl"],"Dockerized model with monitoring",[
+ ["Deployment",0,[["FastAPI model server","E"],["Dockerize it","E"]]],
+ ["Monitoring",0,[["Data drift detector (PSI)","M"]]],
+ ["Edge AI",1,[["Int8 quantization","M"]]],
+ ["Distributed Training",1,[["Data-parallel training loop","H"]]]]],
+["gen","Generative AI",4,["cv","nlp"],"Chat-with-your-docs app",[
+ ["LLMs",0,[["Sampling: temperature, top-k, top-p","E"],["KV cache","M"],["LoRA layer","M"]]],
+ ["Diffusion",0,[["VAE","M"],["DDPM forward/reverse","H"]]],
+ ["Prompting",0,[["Structured JSON output","E"]]],
+ ["RAG",0,[["Cosine similarity search","E"],["Chunker with overlap","E"],["Hybrid search + rerank","M"]]],
+ ["Multimodal",0,[["Image captioning with a VLM","M"]]]]],
+["agt","Agentic AI",5,["gen"],"Multi-agent research assistant",[
+ ["Tool Calling",0,[["Tool-call parser","E"]]],
+ ["ReAct & Memory",0,[["ReAct loop, no framework","M"],["Long-term memory store","M"]]],
+ ["Multi-Agent & MCP",0,[["Build an MCP server","M"],["Orchestrator + workers","H"]]],
+ ["Evals",0,[["LLM-as-judge harness","M"]]]]],
+["fut","Future & Safety",6,["agt"],"Essay on the path to AGI + fairness audit",[
+ ["ANI / AGI / ASI",0,[["Solve 5 ARC-AGI tasks","H"]]],
+ ["Alignment & Explainability",0,[["SHAP on a trained model","E"],["Linear probe on hidden states","M"],["FGSM adversarial example","M"]]],
+ ["Ethics & Fairness",0,[["Demographic parity + equal opportunity","E"]]]]],
+];
+const K="ai-roadmap-v2",W=160,H=52,GX=30,GY=70,DN={E:"Easy",M:"Medium",H:"Hard"};
+let S={};try{S=JSON.parse(localStorage.getItem(K))||{}}catch{}
+const save=()=>{try{localStorage.setItem(K,JSON.stringify(S))}catch{}};
+const keys=t=>t[5].flatMap((s,i)=>s[2].map((_,j)=>`${t[0]}-${i}-${j}`));
+const prog=ks=>[ks.filter(k=>S[k]).length,ks.length];
+const rows={};T.forEach(t=>(rows[t[2]]??=[]).push(t));
+const maxW=Math.max(...Object.values(rows).map(r=>r.length))*(W+GX);
+const pos={};Object.entries(rows).forEach(([r,ts])=>{const off=(maxW-ts.length*(W+GX))/2;ts.forEach((t,i)=>pos[t[0]]=[off+i*(W+GX),r*(H+GY)])});
+const tree=document.getElementById("tree"),svg=document.getElementById("edges"),P=document.getElementById("panel");
+tree.style.width=maxW+"px";tree.style.height=Object.keys(rows).length*(H+GY)+"px";
+function render(){
+  tree.querySelectorAll(".node").forEach(n=>n.remove());svg.innerHTML="";
+  const[D,N]=prog(T.flatMap(keys));
+  T.forEach(t=>{const[x,y]=pos[t[0]];
+    t[3].forEach(d=>{const[px,py]=pos[d];svg.insertAdjacentHTML("beforeend",`<line x1="${px+W/2}" y1="${py+H}" x2="${x+W/2}" y2="${y}" stroke="#3a3f4b" stroke-width="2"/>`)});
+    const[d,n]=prog(keys(t));
+    const b=document.createElement("button");b.className="node"+(d==n?" done":"");b.style.left=x+"px";b.style.top=y+"px";
+    b.innerHTML=`${t[1]}<div class="bar"><i style="width:${d/n*100}%"></i></div>`;b.onclick=()=>open(t);tree.append(b)});
+  document.getElementById("total").innerHTML=`<div class="bar"><i style="width:${D/N*100}%"></i></div>`;
+  document.getElementById("count").textContent=`${D} / ${N} solved`;
+}
+function open(t){
+  const[d,n]=prog(keys(t)),was=[...P.querySelectorAll("details")].map(x=>x.open);
+  P.innerHTML=`<button class="x" onclick="P.classList.remove('open')">×</button><h2>${t[1]}</h2><div style="color:var(--mute)">${d} / ${n} solved</div>
+  ${t[5].map(([name,el,ps],i)=>{const[sd,sn]=prog(ps.map((_,j)=>`${t[0]}-${i}-${j}`));
+    return `<details ${was[i]?"open":""}><summary><span>${name}${el?'<span class="tag">elective</span>':""}</span><span style="color:var(--mute);font-weight:400">${sd}/${sn}</span></summary><table>
+    ${ps.map(([p,df],j)=>{const k=`${t[0]}-${i}-${j}`;return `<tr><td width="24"><input type="checkbox" data-k="${k}" ${S[k]?"checked":""}></td><td>${p}</td><td class="${df}" width="70">${DN[df]}</td></tr>`}).join("")}</table></details>`}).join("")}
+  <h3>Build</h3><p>${t[4]}</p>`;
+  P.querySelectorAll("input").forEach(c=>c.onchange=()=>{S[c.dataset.k]=c.checked;save();render();open(t)});
+  P.classList.add("open");
+}
+render();
+</script>
+</body>
+</html>

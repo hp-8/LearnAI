@@ -1,0 +1,21 @@
+# dependencies
+node_modules/
+
+# build output
+.next/
+out/
+build/
+*.tsbuildinfo
+next-env.d.ts
+
+# local tooling (design caches, browser profiles, screenshots)
+.impeccable/
+
+# env + secrets
+.env*
+*.pem
+
+# misc
+.DS_Store
+.vercel
+npm-debug.log*

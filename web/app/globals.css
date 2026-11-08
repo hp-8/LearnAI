@@ -1,0 +1,36 @@
+:root {
+  --paper: #fbfaf5;
+  --sheet: #fffdf7;
+  --ink: #24262b;
+  --graphite: #5a5a5a;
+  --mute: #66655f;
+  --rule: #dcd7c9;
+  --grid: #e3e8ef;
+  --margin: #e9a6a6;
+  --hl: #ffe14d;
+  --hl-deep: #d9b400;
+  --pen: #1f4fbf;
+  --easy: #2f7d4a;
+  --med: #8f5400;
+  --hard: #b8322a;
+  --grid-paper:
+    linear-gradient(var(--grid) 1px, transparent 1px) 0 0 / 24px 24px,
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0 / 24px 24px,
+    var(--paper);
+}
+
+* { box-sizing: border-box; margin: 0; }
+html, body { height: 100%; }
+body {
+  background: var(--grid-paper);
+  color: var(--ink);
+  font-family: var(--font-body), system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+  font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
+}
+::selection { background: var(--hl); color: var(--ink); }
+:focus-visible { outline: 2px solid var(--pen); outline-offset: 2px; }
+* { scrollbar-width: thin; scrollbar-color: var(--rule) transparent; }
+button { font: inherit; color: inherit; }

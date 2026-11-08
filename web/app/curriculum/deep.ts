@@ -1,0 +1,228 @@
+import { type Field, step, sub, W } from "./types";
+
+const Z2H: [string, string] = ["Karpathy: Zero to Hero", "https://karpathy.ai/zero-to-hero.html"];
+const NNDL: [string, string] = ["Neural Networks and Deep Learning (free book)", "http://neuralnetworksanddeeplearning.com/"];
+const D2L: [string, string] = ["Dive into Deep Learning", "https://d2l.ai/"];
+const PT: [string, string] = ["PyTorch tutorials", "https://pytorch.org/tutorials/"];
+const CS231: [string, string] = ["Stanford CS231n notes", "https://cs231n.github.io/"];
+const SLP: [string, string] = ["Speech and Language Processing (Jurafsky)", "https://web.stanford.edu/~jurafsky/slp3/"];
+const arxiv = (id: string) => "https://arxiv.org/abs/" + id;
+
+export const deep: Field = {
+  id: "dl", name: "Deep Learning", row: 3, deps: ["ml"],
+  project: "Your own autograd engine, then an MLP and CNN trained on MNIST with it and with PyTorch",
+  subs: [
+    sub("From Neurons to Networks", [NNDL, ["3Blue1Brown: Neural networks", "https://www.youtube.com/playlist?list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi"]], [
+      step("The perceptron", "T", "E",
+        "A perceptron computes a weighted sum and outputs 1 if it passes a threshold. The perceptron convergence theorem guarantees it finds a separating line whenever one exists.",
+        "Perceptron",
+        [["Perceptron from scratch", "Train a perceptron on linearly separable 2D data; plot the line after each epoch and count updates.", "Converges to zero errors; you relate update count to the margin."]],
+        ["The Mark I Perceptron (1958)", W("Perceptron"), [
+          "Rosenblatt's machine learned to recognize simple shapes with wired-up photocells.",
+          "The press predicted walking, talking machines: early AI hype.",
+          "Its limits led directly to the first AI winter."]]),
+      step("The XOR problem & multi-layer networks", "C", "E",
+        "A single perceptron can't learn XOR because no straight line separates it. Adding a hidden layer bends the space so it can.",
+        "Perceptrons_(book)",
+        [["Solve XOR", "Show a perceptron fails on XOR, then hand-pick weights for a 2-2-1 network that solves it.", "Truth table printed; you draw the hidden-layer space."]],
+        ["Minsky & Papert's 'Perceptrons' (1969)", W("Perceptrons_(book)"), [
+          "Proved single-layer limits like XOR; read as a verdict on all neural nets.",
+          "Funding dried up for over a decade.",
+          "Backprop for multi-layer nets (1986) revived the field."]]),
+      step("Activation functions", "C", "E",
+        "Non-linear activations (sigmoid, tanh, ReLU, GELU) let stacked layers represent curves. Without them, any depth collapses to one linear layer.",
+        "Activation_function",
+        [["Compare activations", "Plot each activation and its derivative; train the same small net with sigmoid vs ReLU on a spiral dataset.", "Plots plus loss curves; ReLU trains faster and you explain why."]]),
+      step("Universal approximation theorem", "T", "M",
+        "One hidden layer with enough units can approximate any continuous function on a bounded region. It says a network can represent the function, not that training will find it.",
+        "Universal_approximation_theorem",
+        [["Approximate a wiggle", "Fit sin(3x)+x/2 on [−3, 3] with one hidden layer of 2, 8, 64 units.", "Plot shows error falling with width; you note where it extrapolates badly."]]),
+    ]),
+    sub("Training Neural Networks", [Z2H, D2L], [
+      step("Computational graphs & backpropagation", "B", "M",
+        "Backprop applies the chain rule backwards through the graph of operations, reusing intermediate results, to get every weight's gradient in one pass.",
+        "Backpropagation",
+        [["MLP in NumPy", "Two-layer MLP with ReLU, forward and backward by hand, on MNIST.", "Over 97% test accuracy; gradients pass a numerical check."]]),
+      step("Autograd", "B", "H",
+        "An autograd engine records operations as they run and replays them backwards to compute gradients automatically. PyTorch's core is this idea.",
+        "Automatic_differentiation",
+        [["micrograd", "Value class with +, *, tanh, exp and backward() via topological sort; train a tiny MLP with it.", "Gradients match PyTorch; MLP fits a 4-point dataset."]]),
+      step("Softmax & cross-entropy", "B", "E",
+        "Softmax turns scores into probabilities; cross-entropy is the negative log-probability of the right class. Their combined gradient is simply p − y.",
+        "Softmax_function",
+        [["Stable implementation", "softmax and cross_entropy in NumPy with max subtraction; derive and check the p − y gradient.", "No overflow at logits of 1000; gradient check passes."]]),
+      step("Optimizers: SGD, momentum, Adam", "B", "M",
+        "Momentum smooths noisy gradients; Adam also scales each parameter's step by its recent gradient size. Adam is the default; good SGD can generalize better.",
+        "Stochastic_gradient_descent",
+        [["Adam from the paper", "Implement SGD, momentum and Adam; race them on Rosenbrock and on your MNIST MLP.", "Loss curves for all three with one sentence on the result."]]),
+      step("Initialization & vanishing gradients", "T", "M",
+        "Gradients multiply through layers; if each factor is below 1 they vanish, above 1 they explode. Xavier/He initialization keeps signal variance stable.",
+        "Vanishing_gradient_problem",
+        [["Watch gradients vanish", "20-layer MLP with sigmoid vs ReLU+He init; plot gradient norm per layer at the start of training.", "Sigmoid gradients shrink to ~0 in early layers; ReLU+He stays healthy."]]),
+      step("Normalization layers", "B", "M",
+        "BatchNorm normalizes each feature across the batch; LayerNorm across features of one example. Both make deep nets train faster and more stably.",
+        "Batch_normalization",
+        [["BatchNorm layer", "Forward and backward BatchNorm in NumPy with running stats for eval mode.", "Matches torch.nn.BatchNorm1d; train and eval behave differently."]]),
+      step("Regularization: dropout & weight decay", "B", "M",
+        "Dropout randomly zeroes units during training so the net can't rely on any one. Weight decay penalizes large weights. Both reduce overfitting.",
+        "Dilution_(neural_networks)",
+        [["Fight overfitting", "Overfit a small MLP on 1,000 MNIST images, then add dropout and weight decay.", "Validation curves show the gap closing."]]),
+    ]),
+    sub("Deep Learning in Practice", [PT, ["Karpathy: A Recipe for Training NNs", "https://karpathy.github.io/2019/04/25/recipe/"]], [
+      step("PyTorch training loop", "B", "E",
+        "Forward → loss → backward → optimizer step → zero gradients, wrapped with Dataset/DataLoader for batching.",
+        "PyTorch",
+        [["FashionMNIST", "Write the loop yourself with a custom Dataset and DataLoader.", "Over 88% test accuracy; curves plotted."]]),
+      step("Debugging training", "B", "M",
+        "Overfit one batch first, check the initial loss value, visualize inputs and predictions, change one thing at a time.",
+        "Overfitting",
+        [["Break and fix", "Overfit one batch to ~0 loss, then introduce 3 classic bugs (no zero_grad, wrong label shape, un-normalized inputs) and record the symptoms.", "A table: bug → symptom → how you'd spot it."]]),
+    ]),
+    sub("Graph Neural Networks", [["Distill: A Gentle Introduction to GNNs", "https://distill.pub/2021/gnn-intro/"]], [
+      step("Graph neural networks", "B", "H",
+        "Each node updates its features by aggregating its neighbours'. Lets networks learn on molecules, social graphs and road maps.",
+        "Graph_neural_network",
+        [["GCN on Cora", "Two-layer GCN with normalized adjacency on the Cora citation graph.", "About 80% test accuracy; beats an MLP ignoring edges."]],
+        ["AlphaFold", W("AlphaFold"), [
+          "Predicted 3D protein structures at near-experimental accuracy (CASP14, 2020).",
+          "Treated residues and their pairwise relations like a graph processed with attention.",
+          "Released 200M+ predicted structures, changing biology research."]]),
+    ], true),
+  ],
+};
+
+export const vision: Field = {
+  id: "cv", name: "Computer Vision", row: 4, deps: ["dl"],
+  project: "Real-time webcam detector plus a CLIP-powered search over your own photos",
+  subs: [
+    sub("Images & Convolutions", [CS231, ["OpenCV tutorials", "https://docs.opencv.org/4.x/d6/d00/tutorial_py_root.html"]], [
+      step("Images as arrays & classical filters", "B", "E",
+        "An image is an H×W×3 array. Filters like blur and Sobel are small kernels slid over it; this was computer vision before learning.",
+        "Kernel_(image_processing)",
+        [["Edge detector", "conv2d in NumPy; apply blur and Sobel kernels to a photo.", "Matches scipy.signal.correlate2d; edges visible."]]),
+      step("Convolutional neural networks", "B", "M",
+        "A CNN learns its own filters. Weight sharing and local connections make it efficient and translation-aware; pooling builds up larger receptive fields.",
+        "Convolutional_neural_network",
+        [["CNN on CIFAR-10", "Small CNN in PyTorch on CIFAR-10; visualize first-layer filters.", "Over 70% test accuracy; filters look like edges and colour blobs."]],
+        ["AlexNet & ImageNet (2012)", W("AlexNet"), [
+          "Cut ImageNet top-5 error from ~26% to ~15%, a huge jump.",
+          "Key ingredients: GPUs, ReLU, dropout and lots of labelled data.",
+          "Triggered the deep learning boom across every field."]]),
+      step("Modern architectures & residual connections", "C", "M",
+        "Deeper nets got worse until ResNet added skip connections so layers learn a residual on top of the identity. This made 100+ layer networks trainable.",
+        "Residual_neural_network",
+        [["Plain vs residual", "Train a 20-layer plain CNN and the same with residual blocks; compare training curves.", "Residual version trains faster and lower."]],
+        ["ResNet (2015)", arxiv("1512.03385"), [
+          "152 layers won ImageNet 2015.",
+          "Deeper plain nets had higher training error: an optimization problem, not overfitting.",
+          "Skip connections are now in nearly every architecture, including transformers."]]),
+    ]),
+    sub("Practical Vision", [CS231, PT], [
+      step("Transfer learning", "B", "M",
+        "Start from a network pretrained on millions of images and fine-tune it on yours. Works with a few hundred examples.",
+        "Transfer_learning",
+        [["Fine-tune ResNet-18", "On a 5-class flower dataset: train head only, then unfreeze; compare.", "Over 90% validation accuracy; confusion matrix shown."]],
+        ["Dermatologist-level skin cancer classification", "https://www.nature.com/articles/nature21056", [
+          "An ImageNet-pretrained CNN fine-tuned on ~130k skin images matched dermatologists.",
+          "Transfer learning made it possible without inventing a new architecture.",
+          "Later work found performance drops on darker skin underrepresented in the data."]]),
+      step("Data augmentation", "B", "E",
+        "Flip, crop, rotate and colour-jitter training images to teach invariances and multiply effective data.",
+        "Data_augmentation",
+        [["Measure the effect", "Train on 10% of CIFAR-10 with and without augmentation.", "Validation accuracy gap reported with example augmented images."]]),
+    ]),
+    sub("Detection & Segmentation", [["Ultralytics YOLO docs", "https://docs.ultralytics.com/"], CS231], [
+      step("Object detection", "B", "M",
+        "Predict boxes and classes. IoU measures box overlap; non-max suppression removes duplicates. YOLO does it in one pass for real time.",
+        "Object_detection",
+        [["Box utilities", "iou() and nms() in NumPy.", "Match torchvision.ops."],
+         ["Fine-tune YOLO", "Fine-tune a small YOLO on a custom dataset of ~200 labelled images.", "mAP@0.5 reported; runs on your webcam."]],
+        ["YOLO (2015)", arxiv("1506.02640"), [
+          "Framed detection as a single regression from image to boxes.",
+          "Fast enough for real-time video, trading some accuracy.",
+          "The author later quit CV research over military and privacy uses."]]),
+      step("Segmentation", "B", "H",
+        "Label every pixel. U-Net's encoder captures context, its decoder restores detail via skip connections.",
+        "Image_segmentation",
+        [["U-Net on pets", "Small U-Net on Oxford-IIIT Pet masks.", "Mean IoU over 0.7; overlays shown."]],
+        ["U-Net in medical imaging", arxiv("1505.04597"), [
+          "Designed for cell segmentation with very few labelled images.",
+          "Heavy augmentation (elastic deformations) compensated for small data.",
+          "Became the standard for medical segmentation and the backbone of diffusion models."]]),
+    ]),
+    sub("Vision Transformers & CLIP", [["ViT paper", arxiv("2010.11929")], ["CLIP paper", arxiv("2103.00020")]], [
+      step("ViT & CLIP", "C", "M",
+        "ViT treats image patches like words for a transformer. CLIP trains image and text encoders together so matching pairs land close, enabling zero-shot classification and search.",
+        "Vision_transformer",
+        [["Search your photos", "Embed your photos and text queries with a pretrained CLIP; return top matches.", "Queries like 'a dog on a beach' find the right photos."]]),
+    ]),
+  ],
+};
+
+export const nlp: Field = {
+  id: "nlp", name: "NLP", row: 4, deps: ["dl"],
+  project: "A tiny GPT trained on your own text, plus a fine-tuned classifier",
+  subs: [
+    sub("Classical NLP", [SLP], [
+      step("Text preprocessing & tokenization", "B", "E",
+        "Split text into units (words, subwords), normalize case and punctuation. Choices here silently change every downstream result.",
+        "Lexical_analysis",
+        [["Tokenize three ways", "Tokenize the same paragraph by whitespace, regex and a subword tokenizer; compare counts and edge cases.", "Table of tokens with 3 failure cases noted."]]),
+      step("Bag of words & TF-IDF", "B", "E",
+        "Represent a document by word counts, weighting words by how rare they are across documents. Simple, fast and still a strong baseline.",
+        "Tf-idf",
+        [["Newsgroup classifier", "TF-IDF by hand, then logistic regression on 4 categories of 20 Newsgroups.", "Matches sklearn TfidfVectorizer; over 85% accuracy."]]),
+      step("N-gram language models", "B", "M",
+        "Predict the next word from the previous n−1 words using counts. Perplexity measures how surprised the model is by real text.",
+        "Word_n-gram_language_model",
+        [["Bigram & trigram LMs", "Train on a book with add-k smoothing; generate text and report perplexity on held-out text.", "Trigram has lower perplexity; samples shown."]]),
+      step("Word embeddings", "B", "M",
+        "Learn dense vectors by predicting nearby words. Words used in similar contexts get similar vectors (king − man + woman ≈ queen).",
+        "Word2vec",
+        [["Skip-gram", "Skip-gram with negative sampling on text8 in PyTorch.", "Sensible nearest neighbours for 5 words."]],
+        ["Bias in word embeddings", arxiv("1607.06520"), [
+          "Embeddings learned 'man : programmer :: woman : homemaker'.",
+          "Models absorb the statistics of their training text, including stereotypes.",
+          "Proposed debiasing showed the bias can be measured, but not fully removed."]]),
+    ]),
+    sub("Sequence Models", [["Karpathy: Unreasonable Effectiveness of RNNs", "https://karpathy.github.io/2015/05/21/rnn-effectiveness/"], ["Colah: Understanding LSTMs", "https://colah.github.io/posts/2015-08-Understanding-LSTMs/"]], [
+      step("RNNs & LSTMs", "B", "M",
+        "An RNN reads a sequence step by step carrying a hidden state. LSTMs add gates so information survives long sequences.",
+        "Long_short-term_memory",
+        [["Char-level generator", "Char RNN then LSTM on tiny-shakespeare; sample at two temperatures.", "LSTM samples have real words and line breaks."]]),
+      step("Seq2seq & attention", "C", "M",
+        "An encoder compresses the input, a decoder generates the output. Attention lets the decoder look back at every input position instead of one fixed vector.",
+        "Attention_(machine_learning)",
+        [["Attention heatmap", "Train a small seq2seq with attention to reverse or sort digit strings; plot the attention weights.", "Heatmap shows the expected alignment."]],
+        ["Google Neural Machine Translation (2016)", arxiv("1609.08144"), [
+          "Replaced phrase-based translation with one LSTM seq2seq with attention.",
+          "Cut translation errors by about 60% on some language pairs.",
+          "Shipped to production for hundreds of millions of users."]]),
+    ]),
+    sub("Transformers", [["The Illustrated Transformer", "https://jalammar.github.io/illustrated-transformer/"], ["Attention Is All You Need", arxiv("1706.03762")], ["Karpathy: nanoGPT", "https://github.com/karpathy/nanoGPT"]], [
+      step("The transformer", "B", "H",
+        "Self-attention lets every token look at every other token in parallel. Stacks of attention + MLP blocks with residuals and LayerNorm make the transformer.",
+        "Transformer_(deep_learning_architecture)",
+        [["Attention & a GPT block", "Scaled dot-product attention with causal mask, multi-head attention, then a full GPT block.", "Matches PyTorch's attention given the same weights."],
+         ["Tiny GPT", "Train your GPT on tiny-shakespeare.", "Lower validation loss than your LSTM."]]),
+      step("Pretrained models: BERT & GPT", "C", "M",
+        "Pretrain on huge text (BERT fills in blanks, GPT predicts the next token), then reuse. Changed NLP from task-specific models to fine-tuning one model.",
+        "BERT_(language_model)",
+        [["Probe BERT and GPT-2", "Use BERT for fill-in-the-blank and GPT-2 for continuation on 10 prompts each.", "Examples where each excels and fails."]],
+        ["BERT in Google Search (2019)", "https://blog.google/products/search/search-language-understanding-bert/", [
+          "BERT helped understand about 1 in 10 English queries.",
+          "Prepositions like 'to' and 'for' finally changed results.",
+          "Serving needed specialized hardware (TPUs) for latency."]]),
+      step("Fine-tuning for tasks", "B", "M",
+        "Add a small head on a pretrained model and train on labelled data for classification, entity tagging or QA.",
+        "Fine-tuning_(deep_learning)",
+        [["Fine-tune DistilBERT", "Sentiment classification on IMDB with Hugging Face Trainer.", "Over 90% accuracy; error analysis of 10 mistakes."]]),
+    ]),
+    sub("Speech", [["Hugging Face Audio Course", "https://huggingface.co/learn/audio-course"]], [
+      step("Speech recognition", "B", "M",
+        "Turn audio into spectrograms and map them to text. Whisper is a transformer trained on 680k hours of audio.",
+        "Speech_recognition",
+        [["Transcribe a lecture", "Chunked Whisper transcription of a 30-minute file into .srt with timestamps.", "Subtitles line up with the speech."]]),
+    ], true),
+  ],
+};

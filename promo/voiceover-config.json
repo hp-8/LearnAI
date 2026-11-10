@@ -1,0 +1,16 @@
+{
+  "voiceId": "TxGEqnHWrfWFTfGW9XjX",
+  "model": "eleven_multilingual_v2",
+  "outputDir": "audio",
+  "sections": [
+    { "id": "hook", "text": "You've bookmarked forty-seven AI courses.", "startTime": 0.3, "settings": { "stability": 0.35, "similarity_boost": 0.9, "style": 0.4 } },
+    { "id": "zero", "text": "Finished? Zero.", "startTime": 2.6, "settings": { "stability": 0.3, "similarity_boost": 0.9, "style": 0.45 } },
+    { "id": "chaos", "text": "Because nobody tells you where to start.", "startTime": 4.1, "settings": { "stability": 0.45, "similarity_boost": 0.88, "style": 0.35 } },
+    { "id": "reveal", "text": "This is LearnAI. One free map for all of AI.", "startTime": 6.3, "settings": { "stability": 0.6, "similarity_boost": 0.85, "style": 0.3 } },
+    { "id": "map", "text": "Fourteen fields. From math, to machine learning, to agents.", "startTime": 9.2, "settings": { "stability": 0.6, "similarity_boost": 0.85, "style": 0.25 } },
+    { "id": "loop", "text": "Every topic: learn it. Solve it. Build it.", "startTime": 12.7, "settings": { "stability": 0.55, "similarity_boost": 0.85, "style": 0.3 } },
+    { "id": "progress", "text": "Tick it off, and watch your progress grow.", "startTime": 16.0, "settings": { "stability": 0.65, "similarity_boost": 0.85, "style": 0.2 } },
+    { "id": "together", "text": "It's open source, because we learn better together.", "startTime": 18.9, "settings": { "stability": 0.65, "similarity_boost": 0.82, "style": 0.25 } },
+    { "id": "cta", "text": "Start today. It's free.", "startTime": 21.8, "settings": { "stability": 0.45, "similarity_boost": 0.88, "style": 0.35 } }
+  ]
+}

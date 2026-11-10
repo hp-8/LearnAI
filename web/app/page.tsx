@@ -161,7 +161,7 @@ export default function Atlas() {
   return (
     <div className={s.app}>
       <header className={s.bar}>
-        <h1 className={s.brand}>AI Atlas</h1>
+        <h1 className={s.brand}>LearnAI</h1>
         <p className={s.total}><strong>{all[0]}</strong> of {all[1]} stars lit</p>
         <div className={s.meter} role="progressbar" aria-valuenow={all[0]} aria-valuemax={all[1]} aria-label="Overall progress">
           <i style={{ width: `${(all[0] / all[1]) * 100}%` }} />

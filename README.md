@@ -1,4 +1,4 @@
-# LearnStuff
+# LearnAI
 
 A structured, open roadmap for learning all of AI — from math foundations and classical symbolic AI to deep learning, NLP, computer vision, RL, robotics, GenAI, agents, and AI safety.
 

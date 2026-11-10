@@ -6,7 +6,7 @@ const body = Atkinson_Hyperlegible({ subsets: ["latin"], weight: ["400", "700"],
 const hand = Kalam({ subsets: ["latin"], weight: ["400", "700"], variable: "--font-hand" });
 
 export const metadata: Metadata = {
-  title: "AI Atlas",
+  title: "LearnAI",
   description: "A notebook star chart of everything in AI: solve problems, light the sky.",
 };
 

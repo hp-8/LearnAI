@@ -276,7 +276,7 @@ const SCta: React.FC = () => {
         <div style={{ marginTop: 50, display: "inline-block", background: C.ink, color: C.paper, fontSize: portrait ? 40 : 52, fontWeight: 600, padding: "26px 54px", borderRadius: 20, opacity: s, transform: `scale(${(0.8 + s * 0.2) * pulse})`, boxShadow: "0 24px 60px rgba(0,0,0,.25)" }}>
           learnstuff-zeta.vercel.app
         </div>
-        <div style={{ marginTop: 28, fontSize: 32, color: C.mute, opacity: s }}>github.com/hp-8/LearnStuff</div>
+        <div style={{ marginTop: 28, fontSize: 32, color: C.mute, opacity: s }}>github.com/hp-8/LearnAI</div>
       </div>
     </Paper>
   );

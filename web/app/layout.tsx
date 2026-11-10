@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" },
   openGraph: { type: "website", siteName: "LearnAI", url: "/", title: "LearnAI: Learn AI From Scratch", description },
   twitter: { card: "summary_large_image", title: "LearnAI: Learn AI From Scratch", description },
-  verification: process.env.NEXT_PUBLIC_GSC_TOKEN ? { google: process.env.NEXT_PUBLIC_GSC_TOKEN } : undefined,
+  verification: { google: process.env.NEXT_PUBLIC_GSC_TOKEN ?? "vEFqzcjXGmJZVqRD9RlkauTQ65YSH96JvpeH9AckYc8" },
 };
 
 const jsonLd = {

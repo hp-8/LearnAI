@@ -6,9 +6,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "indexnow": "node scripts/indexnow.mjs https://learnai-hp.vercel.app b47008a5dcae45aa852bd49ffe06874b"
   },
   "dependencies": {
+    "@next/third-parties": "^16.4.5",
+    "@vercel/speed-insights": "^2.1.0",
     "next": "16.4.5",
     "react": "19.3.0",
     "react-dom": "19.3.0"

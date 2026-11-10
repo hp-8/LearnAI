@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { FIELDS, KIND, DIFF, W as wiki, linkKind, type Field, type Step } from "./curriculum";
 import s from "./page.module.css";
+import { track } from "./site";
 
 const STORE = "ai-atlas-v3", NOTES = "ai-atlas-notes-v3";
 const WIDTH = 1000, ROW = 250, TOP = 90;
@@ -126,6 +127,7 @@ export default function Atlas() {
     // Solving every problem lights the star.
     if (star) next[star.k] = star.problems.every((_, i) => next[`${star.k}-x${i}`]);
     const sk = star?.k ?? k;
+    if (next[k] && !done[k]) track(star ? "problem_solved" : "step_completed", { step: sk, problem: k });
     if (next[sk] && !done[sk]) setFlare(sk);
     setDone(next);
     store(STORE, next);
@@ -166,6 +168,7 @@ export default function Atlas() {
         <div className={s.meter} role="progressbar" aria-valuenow={all[0]} aria-valuemax={all[1]} aria-label="Overall progress">
           <i style={{ width: `${(all[0] / all[1]) * 100}%` }} />
         </div>
+        <a href="/privacy" className={s.privacy}>Privacy</a>
       </header>
 
       <div className={s.skyWrap}>
